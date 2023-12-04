@@ -3,6 +3,8 @@
 //! enables the selectors and thus activates the constraints for the state that the execution
 //! reaches.
 
+use std::marker;
+
 use super::{
     param::MAX_STEP_HEIGHT,
     util::{evm_cm_distribute_advice, CachedRegion, Cell, CellType},
@@ -34,7 +36,7 @@ use strum_macros::EnumIter;
 
 #[allow(missing_docs, reason = "some docs here are tedious and not helpful")]
 #[allow(non_camel_case_types)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, EnumIter, marker::ConstParamTy)]
 /// All the possible execution states that the computation of EVM can arrive.
 /// Some states are shared by multiple opcodes.
 pub enum ExecutionState {
