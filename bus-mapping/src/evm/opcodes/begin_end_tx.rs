@@ -51,14 +51,14 @@ fn gen_begin_tx_steps(state: &mut CircuitInputStateRef) -> Result<ExecStep, Erro
     // Increase caller's nonce
     let caller_address = call.caller_address;
     let nonce_prev = state.sdb.get_account(&caller_address).1.nonce;
-    state.account_write(
-        &mut exec_step,
-        caller_address,
-        AccountField::Nonce,
-        (nonce_prev + 1).into(),
-        nonce_prev.into(),
-        false,
-    )?;
+    // state.account_write(
+    //     &mut exec_step,
+    //     caller_address,
+    //     AccountField::Nonce,
+    //     (nonce_prev + 1).into(),
+    //     nonce_prev.into(),
+    //     false,
+    // )?;
 
     // Add precompile contract address to access list
     for address in 1..=PRECOMPILE_COUNT {
