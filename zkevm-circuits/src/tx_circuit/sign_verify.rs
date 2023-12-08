@@ -82,14 +82,18 @@ impl<F: Field> SignVerifyChip<F> {
         // The values rows_ecc_chip_aux, rows_ecdsa_chip_verification and
         // rows_ecdsa_chip_verification have been obtained from log debugs while running
         // the tx circuit with max_txs=1. For example:
-        // `RUST_LOG=debug RUST_BACKTRACE=1 cargo test tx_circuit_1tx_1max_tx --release
-        // --all-features -- --nocapture`
+        // `RUST_LOG=debug RUST_BACKTRACE=1 cargo test tx_circuit_1tx_1max_tx --release --all-features -- --nocapture`
         // The value rows_range_chip_table has been obtained by patching the halo2
         // library to report the number of rows used in the range chip table
         // region. TODO: Figure out a way to get these numbers automatically.
-        let rows_range_chip_table = 295188;
+
+
+        // let rows_range_chip_table = 295188;
+        let rows_range_chip_table = 20000; // not quite right, but around 2^15
         let rows_ecc_chip_aux = 226;
-        let rows_ecdsa_chip_verification = 104471;
+        // let rows_ecdsa_chip_verification = 104471; // track this down. 
+        let rows_ecdsa_chip_verification = 20000; // around 2^15
+
         let rows_signature_address_verify = 76;
         std::cmp::max(
             rows_range_chip_table,
@@ -110,8 +114,20 @@ impl<F: Field> Default for SignVerifyChip<F> {
     }
 }
 
-const NUMBER_OF_LIMBS: usize = 4;
-const BIT_LEN_LIMB: usize = 72;
+
+// Changes for this
+// - We need a range lookup for whatever BIT_LEN_LIMB / 4 is (for 72 that is 18)
+// - Add 14 into the decomposition so we have a range for it
+// - Also need it for 8 bit for different range values. 
+// - The integer_to_bytes_le function is not dynamic for number of limbs, so update it. 
+
+
+// 72*4 => 288 bits.. 
+// 56*5, fails due to number of lookups being 14 (56/4), but that value not being
+// in the decomposition tag table. Possibly I can just add it.
+const NUMBER_OF_LIMBS: usize = 5;
+// Oddly, bit_len_tag sums to 47 bits. 
+const BIT_LEN_LIMB: usize = 56;
 const BIT_LEN_LAST_LIMB: usize = 256 - (NUMBER_OF_LIMBS - 1) * BIT_LEN_LIMB;
 
 /// SignVerify Configuration
@@ -141,7 +157,7 @@ impl SignVerifyConfig {
         let range_config = RangeChip::<F>::configure(
             meta,
             &main_gate_config,
-            vec![BIT_LEN_LIMB / NUMBER_OF_LIMBS, 8],
+            vec![BIT_LEN_LIMB / NUMBER_OF_LIMBS, 8, 14], // composition is now longer.
             [rns_base.overflow_lengths(), rns_scalar.overflow_lengths()].concat(),
         );
 
@@ -307,7 +323,7 @@ fn integer_to_bytes_le<F: Field, FE: PrimeField>(
     let bytes = int
         .limbs()
         .iter()
-        .zip_eq([BIT_LEN_LIMB, BIT_LEN_LIMB, BIT_LEN_LIMB, BIT_LEN_LAST_LIMB])
+        .zip_eq([BIT_LEN_LIMB, BIT_LEN_LIMB, BIT_LEN_LIMB, BIT_LEN_LIMB, BIT_LEN_LAST_LIMB])
         .map(|(limb, bit_len)| {
             range_chip
                 .decompose(ctx, limb.as_ref().value().copied(), 8, bit_len)
@@ -366,6 +382,7 @@ impl<F: Field> SignVerifyChip<F> {
         let integer_s = ecc_chip.new_unassigned_scalar(Value::known(*sig_s));
         let msg_hash = ecc_chip.new_unassigned_scalar(Value::known(*msg_hash));
 
+        println!("=== DEBUG: done ecc_chip assigning ");
         let r_assigned = scalar_chip.assign_integer(ctx, integer_r, Range::Remainder)?;
         let s_assigned = scalar_chip.assign_integer(ctx, integer_s, Range::Remainder)?;
         let sig = AssignedEcdsaSig {
@@ -373,11 +390,13 @@ impl<F: Field> SignVerifyChip<F> {
             s: s_assigned,
         };
 
+        println!("=== DEBUG: done assigning r,s");
         let pk_in_circuit = ecc_chip.assign_point(ctx, Value::known(*pk))?;
         let pk_assigned = AssignedPublicKey {
             point: pk_in_circuit,
         };
         let msg_hash = scalar_chip.assign_integer(ctx, msg_hash, Range::Remainder)?;
+        println!("=== DEBUG: done assigning hash");
 
         // Convert (msg_hash, pk_x, pk_y) integers to little endian bytes
         let msg_hash_le = integer_to_bytes_le(ctx, range_chip, &msg_hash)?;
@@ -385,6 +404,7 @@ impl<F: Field> SignVerifyChip<F> {
         let pk_x_le = integer_to_bytes_le(ctx, range_chip, pk_x)?;
         let pk_y = pk_assigned.point.y();
         let pk_y_le = integer_to_bytes_le(ctx, range_chip, pk_y)?;
+        println!("=== DEBUG: done assigning.");
 
         // Ref. spec SignVerifyChip 4. Verify the ECDSA signature
         ecdsa_chip.verify(ctx, &sig, &pk_assigned, &msg_hash)?;
@@ -680,7 +700,9 @@ impl<F: Field> SignVerifyChip<F> {
                         // padding (enabled when address == 0)
                         SignData::default()
                     };
+                    println!("=== DEBUG: Pre-assign ECDSA");
                     let assigned_ecdsa = self.assign_ecdsa(&mut ctx, &chips, &signature)?;
+                    println!("=== DEBUG: Post-assign ECDSA");
                     assigned_ecdsas.push(assigned_ecdsa);
                 }
                 log::debug!("ecdsa chip verification: {} rows", ctx.offset());

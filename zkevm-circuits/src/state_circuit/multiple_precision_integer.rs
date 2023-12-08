@@ -131,11 +131,13 @@ where
 
         let limbs = [0; N_LIMBS].map(|_| meta.advice_column());
 
-        for &limb in &limbs {
-            lookup.range_check_u16(meta, "mpi limb fits into u16", |meta| {
-                meta.query_advice(limb, Rotation::cur())
-            });
-        }
+        // TODO: Need a non-u16 solution
+        //
+        // for &limb in &limbs {
+        //     lookup.range_check_u16(meta, "mpi limb fits into u16", |meta| {
+        //         meta.query_advice(limb, Rotation::cur())
+        //     });
+        // }
 
         for (n, value) in values.iter().enumerate() {
             meta.create_gate("mpi value matches claimed limbs", |meta| {

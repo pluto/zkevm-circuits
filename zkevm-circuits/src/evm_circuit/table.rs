@@ -146,8 +146,6 @@ impl FixedTableTag {
 pub enum Table {
     /// The range check table for u8
     U8,
-    /// The range check table for u16
-    U16,
     /// The rest of the fixed table. See [`FixedTableTag`]
     Fixed,
     /// Lookup for transactions

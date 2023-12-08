@@ -134,7 +134,7 @@ impl<F: Field> ExecutionGadget<F> for BeginTxGadget<F> {
         });
 
         // TODO: This is currently failing. Comment out for now.
-        // Presumably our tx nonce witness generation logic is incorrect. 
+        // Presumably our tx nonce witness generation logic is incorrect.
         //
         // Increase caller's nonce.
         // (tx caller's nonce always increases even tx ends with error)

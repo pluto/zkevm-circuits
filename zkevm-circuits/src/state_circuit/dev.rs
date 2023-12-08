@@ -29,7 +29,7 @@ where
         let challenges = Challenges::construct(meta);
         let u8_table = UXTable::construct(meta);
         let u10_table = UXTable::construct(meta);
-        let u16_table = UXTable::construct(meta);
+        // let u16_table = UXTable::construct(meta);
 
         let config = {
             let challenges = challenges.exprs(meta);
@@ -40,7 +40,7 @@ where
                     mpt_table,
                     u8_table,
                     u10_table,
-                    u16_table,
+                    // u16_table,
                     challenges,
                 },
             )

@@ -15,33 +15,33 @@ pub struct Config {
     // https://github.com/zcash/halo2/blob/642efc1536d3ea2566b04814bd60a00c4745ae22/halo2_proofs/src/plonk/circuit.rs#L266
     u8_table: UXTable<8>,
     u10_table: UXTable<10>,
-    u16_table: UXTable<16>,
+    // u16_table: UXTable<16>,
     pub call_context_field_tag: Column<Fixed>,
 }
 
-impl Config {
-    pub fn range_check_u16<F: Field>(
-        &self,
-        meta: &mut ConstraintSystem<F>,
-        msg: &'static str,
-        exp_fn: impl FnOnce(&mut VirtualCells<'_, F>) -> Expression<F>,
-    ) {
-        meta.lookup_any(msg, |meta| {
-            let exp = exp_fn(meta);
-            vec![exp]
-                .into_iter()
-                .zip_eq(self.u16_table.table_exprs(meta))
-                .map(|(exp, table_expr)| (exp, table_expr))
-                .collect()
-        });
-    }
-}
+// impl Config {
+//     pub fn range_check_u16<F: Field>(
+//         &self,
+//         meta: &mut ConstraintSystem<F>,
+//         msg: &'static str,
+//         exp_fn: impl FnOnce(&mut VirtualCells<'_, F>) -> Expression<F>,
+//     ) {
+//         meta.lookup_any(msg, |meta| {
+//             let exp = exp_fn(meta);
+//             vec![exp]
+//                 .into_iter()
+//                 .zip_eq(self.u16_table.table_exprs(meta))
+//                 .map(|(exp, table_expr)| (exp, table_expr))
+//                 .collect()
+//         });
+//     }
+// }
 
 #[derive(Clone)]
 pub struct Queries<F> {
     pub u8: Expression<F>,
     pub u10: Expression<F>,
-    pub u16: Expression<F>,
+    // pub u16: Expression<F>,
     pub call_context_field_tag: Expression<F>,
 }
 
@@ -50,7 +50,7 @@ impl<F: Field> Queries<F> {
         Self {
             u8: c.u8_table.table_exprs(meta)[0].clone(),
             u10: c.u10_table.table_exprs(meta)[0].clone(),
-            u16: c.u16_table.table_exprs(meta)[0].clone(),
+            // u16: c.u16_table.table_exprs(meta)[0].clone(),
             call_context_field_tag: meta.query_fixed(c.call_context_field_tag, Rotation::cur()),
         }
     }
@@ -73,12 +73,12 @@ impl<F: Field> Chip<F> {
         meta: &mut ConstraintSystem<F>,
         u8_table: UXTable<8>,
         u10_table: UXTable<10>,
-        u16_table: UXTable<16>,
+        // u16_table: UXTable<16>,
     ) -> Config {
         let config = Config {
             u8_table,
             u10_table,
-            u16_table,
+            // u16_table,
             call_context_field_tag: meta.fixed_column(),
         };
         meta.annotate_lookup_any_column(config.call_context_field_tag, || {
@@ -90,7 +90,7 @@ impl<F: Field> Chip<F> {
     pub fn load(&self, layouter: &mut impl Layouter<F>) -> Result<(), Error> {
         self.config.u8_table.load(layouter)?;
         self.config.u10_table.load(layouter)?;
-        self.config.u16_table.load(layouter)?;
+        // self.config.u16_table.load(layouter)?;
         layouter.assign_region(
             || "assign call_context_field_tags fixed column",
             |mut region| {

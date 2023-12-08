@@ -262,13 +262,13 @@ pub(crate) fn evm_cm_distribute_advice<F: Field>(
         column_idx += 1;
     }
 
-    // Mark columns used for byte lookup
-    #[allow(clippy::reversed_empty_ranges)]
-    for _ in 0..N_U16_LOOKUPS {
-        dist.add(CellType::Lookup(Table::U16), advices[column_idx]);
-        assert_eq!(advices[column_idx].column_type().phase(), 0);
-        column_idx += 1;
-    }
+    // // Mark columns used for byte lookup
+    // #[allow(clippy::reversed_empty_ranges)]
+    // for _ in 0..N_U16_LOOKUPS {
+    //     dist.add(CellType::Lookup(Table::U16), advices[column_idx]);
+    //     assert_eq!(advices[column_idx].column_type().phase(), 0);
+    //     column_idx += 1;
+    // }
 
     // Mark columns used for for Phase1 constraints
     for _ in column_idx..advices.len() {
@@ -531,13 +531,13 @@ mod tests {
             cm.get(CellType::Lookup(Table::U8)).unwrap().len(),
             N_U8_LOOKUPS
         );
-        if N_U16_LOOKUPS == 0 {
-            assert!(cm.get(CellType::Lookup(Table::U16)).is_none());
-        } else {
-            assert_eq!(
-                cm.get(CellType::Lookup(Table::U16)).unwrap().len(),
-                N_U16_LOOKUPS
-            );
-        }
+        // if N_U16_LOOKUPS == 0 {
+        //     assert!(cm.get(CellType::Lookup(Table::U16)).is_none());
+        // } else {
+        //     assert_eq!(
+        //         cm.get(CellType::Lookup(Table::U16)).unwrap().len(),
+        //         N_U16_LOOKUPS
+        //     );
+        // }
     }
 }

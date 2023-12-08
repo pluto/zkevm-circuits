@@ -128,6 +128,8 @@ impl<F: Field> From<Vec<Bytecode>> for BytecodeCircuitAssignment<F> {
                 };
             }
         }
+        println!("===DEBUG (BYTECODE): rows={}", rows.len());
+
         Self(rows)
     }
 }
@@ -579,6 +581,7 @@ impl<F: Field> BytecodeCircuitConfig<F> {
     ) -> Result<(), Error> {
         let last_row_offset = max_rows - 1;
 
+        println!("===DEBUG (BYTECODE): witness_len={}, max_rows={}, last_row_offset={}", witness.len(), max_rows, last_row_offset);
         if witness.len() > last_row_offset {
             // The last_row_offset-th row must be reserved for padding.
             // so we have "last_row_offset rows" usable

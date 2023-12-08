@@ -27,7 +27,8 @@ fn load_normalize_table_impl<F: Field>(
 ) -> Result<(), Error> {
     assert!(range <= BIT_SIZE as u64);
     let part_size = get_num_bits_per_lookup_impl(range as usize, log_height);
-    layouter.assign_table(
+    let mut count = 0;
+    let r = layouter.assign_table(
         || format!("{} table", name),
         |mut table| {
             // Iterate over all combinations of parts, each taking values in the range.
@@ -35,7 +36,8 @@ fn load_normalize_table_impl<F: Field>(
                 .map(|_| 0u64..range)
                 .multi_cartesian_product()
                 .enumerate()
-            {
+            {   
+                count = count + 1;
                 let mut input = 0u64;
                 let mut output = 0u64;
                 let mut factor = 1u64;
@@ -59,7 +61,11 @@ fn load_normalize_table_impl<F: Field>(
             }
             Ok(())
         },
-    )
+    );
+
+    println!("=== DEBUG (keccak): Populated lookup range={}, part_size={}. Count={}",range, part_size, count);
+
+    r
 }
 
 /// Loads the byte packing table

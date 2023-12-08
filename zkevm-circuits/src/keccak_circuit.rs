@@ -1037,7 +1037,10 @@ impl<F: Field> SubCircuit<F> for KeccakCircuit<F> {
     ) -> Result<(), Error> {
         config.load_aux_tables(layouter)?;
         let witness = self.generate_witness(*challenges);
-        config.assign(layouter, witness.as_slice())
+        let r = config.assign(layouter, witness.as_slice());
+
+        println!("=== DEBUG (keccak): witness_len:{}, columns:{}", witness.len(), config.cell_manager.columns().len());
+        r
     }
 }
 

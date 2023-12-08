@@ -902,6 +902,12 @@ pub(crate) fn multi_keccak<F: Field>(
             keccak(&mut rows, &[], challenges);
             rows
         };
+        println!("=== DEBUG (keccak): pre_padding_rows:{}, hashes_capacity:{}, row_capacity:{}",
+            rows.len(),
+            capacity,
+            (1 + capacity * (NUM_ROUNDS + 1)) * get_num_rows_per_round()
+        );
+
         // Pad with no data hashes to the expected capacity
         while rows.len() < (1 + capacity * (NUM_ROUNDS + 1)) * get_num_rows_per_round() {
             rows.extend(padding_rows.clone());

@@ -39,7 +39,7 @@ use witness::Block;
 pub struct EvmCircuitConfig<F> {
     fixed_table: [Column<Fixed>; 4],
     u8_table: UXTable<8>,
-    u16_table: UXTable<16>,
+    // u16_table: UXTable<16>,
     /// The execution config
     pub execution: Box<ExecutionConfig<F>>,
     // External tables
@@ -72,8 +72,8 @@ pub struct EvmCircuitConfigArgs<F: Field> {
     pub exp_table: ExpTable,
     /// U8Table
     pub u8_table: UXTable<8>,
-    /// U16Table
-    pub u16_table: UXTable<16>,
+    // U16Table
+    // pub u16_table: UXTable<16>,
 }
 
 impl<F: Field> SubCircuitConfig<F> for EvmCircuitConfig<F> {
@@ -92,7 +92,7 @@ impl<F: Field> SubCircuitConfig<F> for EvmCircuitConfig<F> {
             keccak_table,
             exp_table,
             u8_table,
-            u16_table,
+            // u16_table,
         }: Self::ConfigArgs,
     ) -> Self {
         let fixed_table = [(); 4].map(|_| meta.fixed_column());
@@ -101,7 +101,7 @@ impl<F: Field> SubCircuitConfig<F> for EvmCircuitConfig<F> {
             challenges,
             &fixed_table,
             &u8_table,
-            &u16_table,
+            // &u16_table,
             &tx_table,
             &rw_table,
             &bytecode_table,
@@ -112,7 +112,7 @@ impl<F: Field> SubCircuitConfig<F> for EvmCircuitConfig<F> {
         ));
 
         u8_table.annotate_columns(meta);
-        u16_table.annotate_columns(meta);
+        // u16_table.annotate_columns(meta);
         fixed_table.iter().enumerate().for_each(|(idx, &col)| {
             meta.annotate_lookup_any_column(col, || format!("fix_table_{}", idx))
         });
@@ -124,12 +124,12 @@ impl<F: Field> SubCircuitConfig<F> for EvmCircuitConfig<F> {
         keccak_table.annotate_columns(meta);
         exp_table.annotate_columns(meta);
         u8_table.annotate_columns(meta);
-        u16_table.annotate_columns(meta);
+        // u16_table.annotate_columns(meta);
 
         Self {
             fixed_table,
             u8_table,
-            u16_table,
+            // u16_table,
             execution,
             tx_table,
             rw_table,
@@ -152,10 +152,18 @@ impl<F: Field> EvmCircuitConfig<F> {
         layouter.assign_region(
             || "fixed table",
             |mut region| {
+                // TODO: This is the problem. 
+                for t in fixed_table_tags.iter() {
+                    let f: Box<dyn Iterator<Item = [F; 4]>> = t.build();
+                    println!("===DEBUG (fixed table): tag={:?}, length={:?}", t, f.count());
+                }
+
                 for (offset, row) in std::iter::once([F::ZERO; 4])
                     .chain(fixed_table_tags.iter().flat_map(|tag| tag.build()))
                     .enumerate()
-                {
+                {   
+                    // we want the length, that is offset. the index into the list
+                    // the length is dynamic, determined by the iterator 
                     for (column, value) in self.fixed_table.iter().zip_eq(row) {
                         region.assign_fixed(|| "", *column, offset, || Value::known(value))?;
                     }
@@ -372,7 +380,7 @@ impl<F: Field> Circuit<F> for EvmCircuit<F> {
         let keccak_table = KeccakTable::construct(meta);
         let exp_table = ExpTable::construct(meta);
         let u8_table = UXTable::construct(meta);
-        let u16_table = UXTable::construct(meta);
+        // let u16_table = UXTable::construct(meta);
         let challenges = Challenges::construct(meta);
         let challenges_expr = challenges.exprs(meta);
 
@@ -389,7 +397,7 @@ impl<F: Field> Circuit<F> for EvmCircuit<F> {
                     keccak_table,
                     exp_table,
                     u8_table,
-                    u16_table,
+                    // u16_table,
                 },
             ),
             challenges,
@@ -429,7 +437,7 @@ impl<F: Field> Circuit<F> for EvmCircuit<F> {
         config.exp_table.load(&mut layouter, block)?;
 
         config.u8_table.load(&mut layouter)?;
-        config.u16_table.load(&mut layouter)?;
+        // config.u16_table.load(&mut layouter)?;
 
         self.synthesize_sub(&config, &challenges, &mut layouter)
     }

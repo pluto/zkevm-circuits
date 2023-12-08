@@ -77,9 +77,9 @@ impl Instrument {
                     CellType::Lookup(Table::U8) => {
                         report.u8_lookup = data_entry;
                     }
-                    CellType::Lookup(Table::U16) => {
-                        report.u16_lookup = data_entry;
-                    }
+                    // CellType::Lookup(Table::U16) => {
+                    //     report.u16_lookup = data_entry;
+                    // }
                     CellType::Lookup(Table::Fixed) => {
                         report.fixed_table = data_entry;
                     }
@@ -121,7 +121,7 @@ pub struct ExecStateReport {
     pub storage_2: StateReportRow,
     pub storage_perm: StateReportRow,
     pub u8_lookup: StateReportRow,
-    pub u16_lookup: StateReportRow,
+    // pub u16_lookup: StateReportRow,
     pub byte_lookup: StateReportRow,
     pub fixed_table: StateReportRow,
     pub tx_table: StateReportRow,

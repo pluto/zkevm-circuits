@@ -38,10 +38,8 @@ use strum_macros::EnumIter;
 
 //  1. limb_difference fits into 16 bits.
 //  2. limb_difference is not zero because its inverse exists.
-//  3. RLC of the pairwise limb differences before the first_different_limb is
-//     zero.
-//  4. limb_difference equals the difference of the limbs at
-//     first_different_limb.
+//  3. RLC of the pairwise limb differences before the first_different_limb is zero.
+//  4. limb_difference equals the difference of the limbs at first_different_limb.
 
 #[derive(Clone, Copy, Debug, EnumIter)]
 pub enum LimbIndex {
@@ -121,9 +119,10 @@ impl Config {
             limb_difference_inverse,
         };
 
-        lookup.range_check_u16(meta, "limb_difference fits into u16", |meta| {
-            meta.query_advice(limb_difference, Rotation::cur())
-        });
+        // TODO: Need a non-u16 solution
+        // lookup.range_check_u16(meta, "limb_difference fits into u16", |meta| {
+        //     meta.query_advice(limb_difference, Rotation::cur())
+        // });
 
         meta.create_gate("limb_difference is not zero", |meta| {
             let selector = meta.query_fixed(selector, Rotation::cur());

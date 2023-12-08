@@ -402,8 +402,8 @@ impl<F: Field> SubCircuitConfig<F> for PiCircuitConfig<F> {
             let default_calldata_row_constraint4 = tx_id_is_zero_config.expr() * gas_cost.expr();
 
             // if tx_id != 0 then
-            //    1. tx_id_next == tx_id: idx_next == idx + 1, gas_cost_next == gas_cost +
-            //       gas_next, is_final == false;
+            //    1. tx_id_next == tx_id: idx_next == idx + 1, gas_cost_next == gas_cost + gas_next,
+            //       is_final == false;
             //    2. tx_id_next == tx_id + 1 + x (where x is in [0, 2^16)): idx_next == 0,
             //       gas_cost_next == gas_next, is_final == true;
             //    3. tx_id_next == 0: is_final == true, idx_next == 0, gas_cost_next == 0;
@@ -924,6 +924,7 @@ impl<F: Field> PiCircuitConfig<F> {
         )?;
 
         // id
+        println!("=== DEBUG (PI): pre-assign withdrawals, byte_len={}", rpi_bytes.len());
         let (_, raw_id) = self.assign_raw_bytes(
             region,
             &wd.id.to_le_bytes(),
@@ -1010,6 +1011,7 @@ impl<F: Field> PiCircuitConfig<F> {
             .map(|x| x.to_vec())
             .collect();
 
+        // println!("=== DEBUG (PI): assign raw bytes, value_bytes={}, chunk_len=16", value_bytes_chunk.len());
         *current_rpi_offset = value_bytes_chunk.iter().try_fold(
             // after rchunk
             start_offset,
@@ -1131,15 +1133,19 @@ impl<F: Field> PiCircuitConfig<F> {
                 self.block_table.value,
                 *block_table_offset,
             )?;
+        
+        let mut raw_bytes = &block_values
+            .coinbase
+            .to_fixed_bytes()
+            .iter()
+            .rev()
+            .copied()
+            .collect_vec();
+
+        println!("=== DEBUG (PI): pre-assign block table, block_values_len={}", raw_bytes.len());
         let (_, word) = self.assign_raw_bytes(
             region,
-            &block_values
-                .coinbase
-                .to_fixed_bytes()
-                .iter()
-                .rev()
-                .copied()
-                .collect_vec(),
+            raw_bytes,
             rpi_bytes_keccak_rlc,
             rpi_bytes,
             current_rpi_offset,
@@ -1158,9 +1164,12 @@ impl<F: Field> PiCircuitConfig<F> {
                 self.block_table.value,
                 *block_table_offset,
             )?;
+
+        let mut gas_bytes = &block_values.gas_limit.to_le_bytes();
+        println!("=== DEBUG (PI): pre-assign gas_limit, gas_bytes_len={}", gas_bytes.len());
         let (_, word) = self.assign_raw_bytes(
             region,
-            &block_values.gas_limit.to_le_bytes(),
+            gas_bytes,
             rpi_bytes_keccak_rlc,
             rpi_bytes,
             current_rpi_offset,
@@ -1541,8 +1550,8 @@ impl<F: Field> SubCircuit<F> for PiCircuit<F> {
                 region.name_column(|| "Public_Inputs", config.pi_instance);
 
                 let circuit_len = config.circuit_len();
+                println!("=== DEBUG (PI): circuit_len={}", circuit_len);
                 let mut rpi_bytes = vec![0u8; circuit_len];
-
                 let mut rpi_bytes_keccak_rlc = Value::known(F::ZERO);
 
                 // traverse reversely of the region
@@ -1579,6 +1588,8 @@ impl<F: Field> SubCircuit<F> for PiCircuit<F> {
                     zero_cell.clone(),
                 )?;
                 block_table_offset += 1;
+                
+                println!("=== DEBUG (PI): pre-assign block table");
                 config.assign_block_table(
                     &mut region,
                     &mut block_table_offset,
@@ -1759,6 +1770,7 @@ impl<F: Field> SubCircuit<F> for PiCircuit<F> {
                         call_data_offset += 1;
                         calldata_count += 1;
                     }
+                    println!("=== DEBUG (PI): assign calldata count={}, offset={}, max={}", calldata_count, call_data_offset, config.max_calldata);
                 }
 
                 for _ in calldata_count..config.max_calldata {

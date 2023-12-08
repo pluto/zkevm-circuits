@@ -64,6 +64,8 @@ impl MptUpdates {
 
     pub(crate) fn mock_from(rows: &[Rw]) -> Self {
         let mock_old_root = Word::from(0xcafeu64);
+
+        let mut count = 0;
         let map: BTreeMap<_, _> = rows
             .iter()
             .group_by(|row| key(row))
@@ -74,6 +76,7 @@ impl MptUpdates {
                 let first = rows.next().unwrap();
                 let last = rows.last().unwrap_or(first);
                 let key_exists = key;
+                count = count+1;
                 let key = key.set_non_exists(value_prev(first), value(last));
                 (
                     key_exists,
@@ -87,6 +90,7 @@ impl MptUpdates {
                 )
             })
             .collect();
+        println!("=== DEBUG (mpt mock): rows={}", count);
         MptUpdates {
             updates: map,
             old_root: mock_old_root,

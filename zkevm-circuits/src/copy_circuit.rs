@@ -512,11 +512,10 @@ impl<F: Field> CopyCircuitConfig<F> {
         challenges: Challenges<Value<F>>,
         copy_event: &CopyEvent,
     ) -> Result<(), Error> {
-        for (step_idx, (tag, table_row, circuit_row)) in
-            CopyTable::assignments(copy_event, challenges)
-                .iter()
-                .enumerate()
-        {
+        let a = CopyTable::assignments(copy_event, challenges);
+
+        println!("===DEBUG (COPY): assignments={}", a.len());
+        for (step_idx, (tag, table_row, circuit_row)) in a.iter().enumerate() {
             let is_read = step_idx % 2 == 0;
 
             // Copy table assignments
@@ -605,6 +604,7 @@ impl<F: Field> CopyCircuitConfig<F> {
         );
         let filler_rows = max_copy_rows - copy_rows_needed - DISABLED_ROWS;
 
+        println!("===DEBUG (COPY): copy_rows_needed={}, max_copy_rows={}", copy_rows_needed, max_copy_rows);
         let tag_chip = BinaryNumberChip::construct(self.copy_table.tag);
         let lt_chip = LtChip::construct(self.addr_lt_addr_end);
 

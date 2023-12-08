@@ -171,7 +171,9 @@ lazy_static::lazy_static! {
     // Step slot height in evm circuit
     pub(crate) static ref EXECUTION_STATE_HEIGHT_MAP : HashMap<ExecutionState, usize> = get_step_height_map();
 }
-fn get_step_height_map() -> HashMap<ExecutionState, usize> {
+
+/// Function
+pub fn get_step_height_map() -> HashMap<ExecutionState, usize> {
     let mut meta = ConstraintSystem::<Fr>::default();
     let circuit = EvmCircuit::configure(&mut meta);
 
