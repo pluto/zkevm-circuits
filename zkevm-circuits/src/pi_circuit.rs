@@ -82,7 +82,7 @@ pub struct PiCircuitConfig<F: Field> {
     // refer in tx_calldata constrains, and only need tx_value.lo() part
     tx_value_lo_inv: Column<Advice>,
     tx_id_diff_inv: Column<Advice>,
-    fixed_u16: Column<Fixed>,
+    // fixed_u16: Column<Fixed>,
     calldata_gas_cost: Column<Advice>,
     is_final: Column<Advice>,
 
@@ -164,7 +164,7 @@ impl<F: Field> SubCircuitConfig<F> for PiCircuitConfig<F> {
         // lies in the interval [0, 2^16] if their tx_id both do not equal to zero.
         // We do not use 2^8 for the reason that a large block may have more than
         // 2^8 transfer transactions which have 21000*2^8 (~ 5.376M) gas.
-        let fixed_u16 = meta.fixed_column();
+        // let fixed_u16 = meta.fixed_column();
         let calldata_gas_cost = meta.advice_column_in(SecondPhase);
         let is_final = meta.advice_column();
 
@@ -347,22 +347,25 @@ impl<F: Field> SubCircuitConfig<F> for PiCircuitConfig<F> {
             tx_id_diff_inv,
         );
 
-        meta.lookup_any("tx_id_diff", |meta| {
-            let tx_id_next = meta.query_advice(tx_id, Rotation::next());
-            let tx_id = meta.query_advice(tx_id, Rotation::cur());
-            let tx_id_inv_next = meta.query_advice(tx_id_inv, Rotation::next());
-            let tx_id_diff_inv = meta.query_advice(tx_id_diff_inv, Rotation::cur());
-            let fixed_u16_table = meta.query_fixed(fixed_u16, Rotation::cur());
+        // TODO: Remove this so we don't need a 2^16 lookup table.
+        // It wil need added back in some manner. 
 
-            let tx_id_next_nonzero = tx_id_next.expr() * tx_id_inv_next;
-            let tx_id_not_equal_to_next = (tx_id_next.expr() - tx_id.expr()) * tx_id_diff_inv;
-            let tx_id_diff_minus_one = tx_id_next - tx_id - 1.expr();
+        // meta.lookup_any("tx_id_diff", |meta| {
+        //     let tx_id_next = meta.query_advice(tx_id, Rotation::next());
+        //     let tx_id = meta.query_advice(tx_id, Rotation::cur());
+        //     let tx_id_inv_next = meta.query_advice(tx_id_inv, Rotation::next());
+        //     let tx_id_diff_inv = meta.query_advice(tx_id_diff_inv, Rotation::cur());
+        //     let fixed_u16_table = meta.query_fixed(fixed_u16, Rotation::cur());
 
-            vec![(
-                tx_id_diff_minus_one * tx_id_next_nonzero * tx_id_not_equal_to_next,
-                fixed_u16_table,
-            )]
-        });
+        //     let tx_id_next_nonzero = tx_id_next.expr() * tx_id_inv_next;
+        //     let tx_id_not_equal_to_next = (tx_id_next.expr() - tx_id.expr()) * tx_id_diff_inv;
+        //     let tx_id_diff_minus_one = tx_id_next - tx_id - 1.expr();
+
+        //     vec![(
+        //         tx_id_diff_minus_one * tx_id_next_nonzero * tx_id_not_equal_to_next,
+        //         fixed_u16_table,
+        //     )]
+        // });
 
         meta.create_gate("calldata constraints", |meta| {
             let q_is_calldata = meta.query_selector(q_tx_calldata);
@@ -515,7 +518,7 @@ impl<F: Field> SubCircuitConfig<F> for PiCircuitConfig<F> {
             tx_id_inv,
             tx_value_lo_inv,
             tx_id_diff_inv,
-            fixed_u16,
+            // fixed_u16,
             calldata_gas_cost,
             is_final,
             rpi_bytes,
@@ -1508,21 +1511,21 @@ impl<F: Field> SubCircuit<F> for PiCircuit<F> {
         challenges: &Challenges<Value<F>>,
         layouter: &mut impl Layouter<F>,
     ) -> Result<(), Error> {
-        layouter.assign_region(
-            || "fixed u16 table",
-            |mut region| {
-                for i in 0..(1 << 16) {
-                    region.assign_fixed(
-                        || format!("row_{}", i),
-                        config.fixed_u16,
-                        i,
-                        || Value::known(F::from(i as u64)),
-                    )?;
-                }
+        // layouter.assign_region(
+        //     || "fixed u16 table",
+        //     |mut region| {
+        //         for i in 0..(1 << 16) {
+        //             region.assign_fixed(
+        //                 || format!("row_{}", i),
+        //                 config.fixed_u16,
+        //                 i,
+        //                 || Value::known(F::from(i as u64)),
+        //             )?;
+        //         }
 
-                Ok(())
-            },
-        )?;
+        //         Ok(())
+        //     },
+        // )?;
         let digest_word_assigned = layouter.assign_region(
             || "region 0",
             |mut region| {
@@ -1543,7 +1546,7 @@ impl<F: Field> SubCircuit<F> for PiCircuit<F> {
                 region.name_column(|| "tx_value_lo_inv", config.tx_value_lo_inv);
                 region.name_column(|| "tx_id_diff_inv", config.tx_id_diff_inv);
 
-                region.name_column(|| "fixed_u16", config.fixed_u16);
+                // region.name_column(|| "fixed_u16", config.fixed_u16);
                 region.name_column(|| "calldata_gas_cost", config.calldata_gas_cost);
                 region.name_column(|| "is_final", config.is_final);
 
