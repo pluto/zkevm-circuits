@@ -175,8 +175,8 @@ impl TransactionContext {
         }
     }
 }
-
-#[derive(Debug, Clone, Default)]
+use serde::{Deserialize, Serialize};
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 /// Result of the parsing of an Ethereum Transaction.
 pub struct Transaction {
     /// The transaction id

@@ -3,7 +3,8 @@
 use crate::operation::Target;
 use std::fmt;
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+use serde::{Deserialize, Serialize};
+#[derive(Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 /// The target and index of an `Operation` in the context of an
 /// `ExecutionTrace`.
 pub struct OperationRef(pub Target, pub usize);

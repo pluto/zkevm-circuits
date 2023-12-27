@@ -33,7 +33,7 @@ pub enum TxFieldTag {
 impl_expr!(TxFieldTag);
 
 /// Tag for a TxLogField in RwTable
-#[derive(Clone, Copy, Debug, PartialEq, Eq, EnumIter)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, EnumIter, Serialize, Deserialize)]
 pub enum TxLogFieldTag {
     /// Address field
     Address = 1,
@@ -45,7 +45,7 @@ pub enum TxLogFieldTag {
 impl_expr!(TxLogFieldTag);
 
 /// Tag for a TxReceiptField in RwTable
-#[derive(Clone, Copy, Debug, PartialEq, Eq, EnumIter, EnumCount)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, EnumIter, EnumCount, Serialize, Deserialize)]
 pub enum TxReceiptFieldTag {
     /// Tx result
     PostStateOrStatus = 1,

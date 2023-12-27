@@ -16,8 +16,9 @@ use crate::{
 
 use super::MptUpdates;
 
+use serde::{Deserialize, Serialize};
 /// Rw constainer for a witness block
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct RwMap(pub HashMap<Target, Vec<Rw>>);
 
 impl std::ops::Index<(Target, usize)> for RwMap {
@@ -158,7 +159,7 @@ impl RwMap {
 )]
 /// Read-write records in execution. Rws are used for connecting evm circuit and
 /// state circuits.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 pub enum Rw {
     /// Start
     Start { rw_counter: usize },

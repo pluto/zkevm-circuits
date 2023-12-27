@@ -42,8 +42,9 @@ use std::{
 pub use transaction::{Transaction, TransactionContext};
 pub use withdrawal::{Withdrawal, WithdrawalContext};
 
+use serde::{Deserialize, Serialize};
 /// Circuit Setup Parameters
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct FixedCParams {
     /// Maximum number of rw operations in the state circuit (RwTable length /
     /// nummber of rows). This must be at least the number of rw operations
@@ -320,6 +321,7 @@ impl CircuitInputBuilder<FixedCParams> {
 
         // rwc index start from 1
         let total_rws = state.block_ctx.rwc.0 - 1;
+
         // We need at least 1 extra Start row
         #[allow(clippy::int_plus_one)]
         {

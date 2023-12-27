@@ -35,10 +35,11 @@ impl RW {
     }
 }
 
+use serde::{Deserialize, Serialize};
 /// Wrapper type over `usize` which represents the global counter. The purpose
 /// of the `RWCounter` is to enforce that each Opcode/Instruction and Operation
 /// is unique and just executed once.
-#[derive(Clone, Copy, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct RWCounter(pub usize);
 
 impl fmt::Debug for RWCounter {
@@ -91,7 +92,7 @@ impl RWCounter {
 }
 
 /// Enum used to differenciate between EVM Stack, Memory and Storage operations.
-#[derive(Debug, Clone, PartialEq, Eq, Copy, EnumIter, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy, EnumIter, Hash, Serialize, Deserialize)]
 pub enum Target {
     /// Start is a padding operation.
     Start = 1,

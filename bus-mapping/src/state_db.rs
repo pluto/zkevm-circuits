@@ -21,8 +21,9 @@ lazy_static! {
 
 const VALUE_ZERO: Word = Word::zero();
 
+use serde::{Deserialize, Serialize};
 /// Memory storage for contract code by code hash.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct CodeDB(HashMap<Hash, Vec<u8>>);
 
 impl CodeDB {

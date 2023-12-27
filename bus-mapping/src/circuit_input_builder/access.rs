@@ -93,9 +93,9 @@ impl From<Vec<Access>> for AccessSet {
         Self { state, code }
     }
 }
-
+use serde::{Deserialize, Serialize};
 /// Source of the code in the EVM execution.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CodeSource {
     /// Code comes from a deployed contract at `Address`.
     Address(Address),

@@ -121,9 +121,9 @@ impl<F: Field, C: Into<Column<Any>> + Copy, const W: usize> LookupTable<F> for [
         vec![]
     }
 }
-
+use serde::{Deserialize, Serialize};
 /// Tag for an AccountField in RwTable
-#[derive(Clone, Copy, Debug, EnumIter, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, EnumIter, Hash, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum AccountFieldTag {
     /// Nonce field
     Nonce = 1,
@@ -137,7 +137,7 @@ pub enum AccountFieldTag {
 impl_expr!(AccountFieldTag);
 
 /// Tag for a CallContextField in RwTable
-#[derive(Clone, Copy, Debug, PartialEq, Eq, EnumIter)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, EnumIter, Serialize, Deserialize)]
 pub enum CallContextFieldTag {
     /// RwCounterEndOfReversion
     RwCounterEndOfReversion = 1,

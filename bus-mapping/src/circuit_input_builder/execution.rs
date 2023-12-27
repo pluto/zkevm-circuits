@@ -9,8 +9,9 @@ use gadgets::impl_expr;
 use halo2_proofs::plonk::Expression;
 use strum_macros::EnumIter;
 
+use serde::{Deserialize, Serialize};
 /// An execution step of the EVM.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct ExecStep {
     /// Execution state
     pub exec_state: ExecState,
@@ -120,7 +121,7 @@ impl ExecStep {
 }
 
 /// Execution state
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub enum ExecState {
     /// EVM Opcode ID
     Op(OpcodeId),
@@ -177,7 +178,7 @@ impl ExecState {
 }
 
 /// Defines the various source/destination types for a copy event.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, EnumIter)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, EnumIter, Serialize, Deserialize)]
 pub enum CopyDataType {
     /// When we need to pad the Copy rows of the circuit up to a certain maximum
     /// with rows that are not "useful".
@@ -222,7 +223,7 @@ pub struct CopyStep {
 }
 
 /// Defines an enum type that can hold either a number or a hash value.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum NumberOrHash {
     /// Variant to indicate a number value.
     Number(usize),
@@ -233,7 +234,7 @@ pub enum NumberOrHash {
 /// Defines a copy event associated with EVM opcodes such as CALLDATACOPY,
 /// CODECOPY, CREATE, etc. More information:
 /// <https://github.com/privacy-scaling-explorations/zkevm-specs/blob/master/specs/copy-proof.md>.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct CopyEvent {
     /// Represents the start address at the source of the copy event.
     pub src_addr: u64,
@@ -296,7 +297,7 @@ impl CopyEvent {
 }
 
 /// Intermediary multiplication step, representing `a * b == d (mod 2^256)`
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ExpStep {
     /// First multiplicand.
     pub a: Word,
@@ -317,7 +318,7 @@ impl From<(Word, Word, Word)> for ExpStep {
 }
 
 /// Event representating an exponentiation `a ^ b == d (mod 2^256)`.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ExpEvent {
     /// Identifier for the exponentiation trace.
     pub identifier: usize,

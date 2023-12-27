@@ -151,9 +151,9 @@ pub struct Withdrawal {
     /// Withdrawal amount in Gwei.
     pub amount: u64,
 }
-
+use serde::{Deserialize};
 /// Definition of all of the constants related to an Ethereum transaction.
-#[derive(Debug, Default, Clone, Serialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Transaction {
     /// Sender address
     pub from: Address,

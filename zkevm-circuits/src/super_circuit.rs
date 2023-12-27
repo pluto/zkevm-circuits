@@ -388,7 +388,7 @@ impl<F: Field> SubCircuit<F> for SuperCircuit<F> {
 }
 
 /// Super Circuit configuration parameters
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct SuperCircuitParams<F: Field> {
     max_txs: usize,
     max_withdrawals: usize,

@@ -75,7 +75,7 @@ pub struct PiCircuitConfig<F: Field> {
     q_rpi_value_start: Column<Fixed>,
     // q_digest_value_start: mark starting of hi and low. can't use selector here because we need
     // rotation
-    q_digest_value_start: Column<Fixed>,
+    // q_digest_value_start: Column<Fixed>,
 
     tx_id_inv: Column<Advice>,
     // Do not need tx_value_hi_inv, because tx_value_inv only
@@ -172,7 +172,7 @@ impl<F: Field> SubCircuitConfig<F> for PiCircuitConfig<F> {
         let q_bytes_last = meta.complex_selector();
         let q_rpi_byte_enable = meta.complex_selector();
         let q_rpi_value_start = meta.fixed_column();
-        let q_digest_value_start = meta.fixed_column();
+        // let q_digest_value_start = meta.fixed_column();
 
         let rpi_bytes = meta.advice_column();
         let rpi_bytes_keccak_rlc = meta.advice_column_in(SecondPhase);
@@ -511,7 +511,7 @@ impl<F: Field> SubCircuitConfig<F> for PiCircuitConfig<F> {
             q_rpi_keccak_lookup,
             q_rpi_value_start,
             q_tx_table,
-            q_digest_value_start,
+            // q_digest_value_start,
             tx_table,
             wd_table,
             keccak_table,
@@ -1539,7 +1539,7 @@ impl<F: Field> SubCircuit<F> for PiCircuit<F> {
                 region.name_column(|| "rpi_bytes", config.rpi_bytes);
                 region.name_column(|| "rpi_bytes_keccak_rlc", config.rpi_bytes_keccak_rlc);
                 region.name_column(|| "rpi_value_lc", config.rpi_value_lc);
-                region.name_column(|| "q_digest_value_start", config.q_digest_value_start);
+                // region.name_column(|| "q_digest_value_start", config.q_digest_value_start);
                 region.name_column(|| "rpi_digest_bytes", config.rpi_digest_bytes);
                 region.name_column(|| "rpi_digest_bytes_lc", config.rpi_digest_bytes_limbs);
                 region.name_column(|| "tx_id_inv", config.tx_id_inv);

@@ -65,7 +65,7 @@ impl Display for Error {
 impl StdError for Error {}
 
 /// Out of Gas errors by opcode
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum OogError {
     /// Out of Gas for opcodes which have non-zero constant gas cost
     Constant,
@@ -132,7 +132,7 @@ impl From<&OpcodeId> for OogError {
 }
 
 /// Insufficient balance errors by opcode/state.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum InsufficientBalanceError {
     /// Insufficient balance during CALL/CALLCODE opcode.
     Call,
@@ -143,7 +143,7 @@ pub enum InsufficientBalanceError {
 }
 
 /// Nonce uint overflow errors by opcode/state.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum NonceUintOverflowError {
     /// Nonce uint overflow during CREATE opcode.
     Create,
@@ -152,7 +152,7 @@ pub enum NonceUintOverflowError {
 }
 
 /// Call depth errors by opcode/state.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum DepthError {
     /// Call depth errors in CALL/CALLCODE opcode.
     Call,
@@ -162,8 +162,9 @@ pub enum DepthError {
     Create2,
 }
 
+use serde::{Deserialize, Serialize};
 /// EVM Execution Error
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ExecError {
     /// Invalid Opcode
     InvalidOpcode,

@@ -6,7 +6,7 @@ use eth_types::{
 };
 
 /// Type of a *CALL*/CREATE* Function.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CallKind {
     /// CALL
     Call,
@@ -49,9 +49,9 @@ impl TryFrom<OpcodeId> for CallKind {
         })
     }
 }
-
+use serde::{Deserialize, Serialize};
 /// Circuit Input related to an Ethereum Call
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Call {
     /// Unique call identifier within the Block.
     pub call_id: usize,

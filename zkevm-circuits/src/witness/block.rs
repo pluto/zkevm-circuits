@@ -14,11 +14,12 @@ use bus_mapping::{
 use eth_types::{Address, Field, ToScalar, Word, H256};
 use halo2_proofs::circuit::Value;
 use itertools::Itertools;
+use serde::{Deserialize, Serialize};
 
 // TODO: Remove fields that are duplicated in`eth_block`
 /// Block is the struct used by all circuits, which contains all the needed
 /// data for witness generation.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct Block<F> {
     /// The randomness for random linear combination
     pub randomness: F,
@@ -155,7 +156,7 @@ impl<F: Field> Block<F> {
 }
 
 /// Block context for execution
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct BlockContext {
     /// The address of the miner for the block
     pub coinbase: Address,
