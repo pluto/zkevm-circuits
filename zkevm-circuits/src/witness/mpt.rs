@@ -90,7 +90,7 @@ impl MptUpdates {
                 )
             })
             .collect();
-        println!("=== DEBUG (mpt mock): rows={}", count);
+        // println!("=== DEBUG (mpt mock): rows={}", count);
         MptUpdates {
             updates: map,
             old_root: mock_old_root,

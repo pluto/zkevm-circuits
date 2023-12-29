@@ -155,7 +155,7 @@ impl<F: Field> EvmCircuitConfig<F> {
                 // TODO: This is the problem. 
                 for t in fixed_table_tags.iter() {
                     let f: Box<dyn Iterator<Item = [F; 4]>> = t.build();
-                    println!("===DEBUG (fixed table): tag={:?}, length={:?}", t, f.count());
+                    // println!("===DEBUG (fixed table): tag={:?}, length={:?}", t, f.count());
                 }
 
                 for (offset, row) in std::iter::once([F::ZERO; 4])

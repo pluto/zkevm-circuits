@@ -63,7 +63,7 @@ fn load_normalize_table_impl<F: Field>(
         },
     );
 
-    println!("=== DEBUG (keccak): Populated lookup range={}, part_size={}. Count={}",range, part_size, count);
+    // println!("=== DEBUG (keccak): Populated lookup range={}, part_size={}. Count={}",range, part_size, count);
 
     r
 }

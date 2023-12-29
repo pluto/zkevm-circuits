@@ -1,5 +1,5 @@
 use crate::{
-    root_circuit::{compile, Config, Gwc, PoseidonTranscript, RootCircuit},
+    root_circuit::{compile, Config, Gwc, PoseidonTranscript, SECURE_MDS, RootCircuit},
     super_circuit::{test::block_1tx, SuperCircuit},
 };
 use bus_mapping::circuit_input_builder::FixedCParams;
@@ -47,7 +47,7 @@ fn test_root_circuit() {
 
         // Create proof
         let proof = {
-            let mut transcript = PoseidonTranscript::new(Vec::new());
+            let mut transcript = PoseidonTranscript::new::<SECURE_MDS>(Vec::new());
             create_proof::<KZGCommitmentScheme<_>, ProverGWC<_>, _, _, _, _>(
                 &params,
                 &pk,

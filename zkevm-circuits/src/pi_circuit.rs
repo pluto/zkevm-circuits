@@ -927,7 +927,7 @@ impl<F: Field> PiCircuitConfig<F> {
         )?;
 
         // id
-        println!("=== DEBUG (PI): pre-assign withdrawals, byte_len={}", rpi_bytes.len());
+        // println!("=== DEBUG (PI): pre-assign withdrawals, byte_len={}", rpi_bytes.len());
         let (_, raw_id) = self.assign_raw_bytes(
             region,
             &wd.id.to_le_bytes(),
@@ -1145,7 +1145,7 @@ impl<F: Field> PiCircuitConfig<F> {
             .copied()
             .collect_vec();
 
-        println!("=== DEBUG (PI): pre-assign block table, block_values_len={}", raw_bytes.len());
+        // println!("=== DEBUG (PI): pre-assign block table, block_values_len={}", raw_bytes.len());
         let (_, word) = self.assign_raw_bytes(
             region,
             raw_bytes,
@@ -1169,7 +1169,7 @@ impl<F: Field> PiCircuitConfig<F> {
             )?;
 
         let mut gas_bytes = &block_values.gas_limit.to_le_bytes();
-        println!("=== DEBUG (PI): pre-assign gas_limit, gas_bytes_len={}", gas_bytes.len());
+        // println!("=== DEBUG (PI): pre-assign gas_limit, gas_bytes_len={}", gas_bytes.len());
         let (_, word) = self.assign_raw_bytes(
             region,
             gas_bytes,
@@ -1553,7 +1553,7 @@ impl<F: Field> SubCircuit<F> for PiCircuit<F> {
                 region.name_column(|| "Public_Inputs", config.pi_instance);
 
                 let circuit_len = config.circuit_len();
-                println!("=== DEBUG (PI): circuit_len={}", circuit_len);
+                // println!("=== DEBUG (PI): circuit_len={}", circuit_len);
                 let mut rpi_bytes = vec![0u8; circuit_len];
                 let mut rpi_bytes_keccak_rlc = Value::known(F::ZERO);
 
@@ -1592,7 +1592,7 @@ impl<F: Field> SubCircuit<F> for PiCircuit<F> {
                 )?;
                 block_table_offset += 1;
                 
-                println!("=== DEBUG (PI): pre-assign block table");
+                // println!("=== DEBUG (PI): pre-assign block table");
                 config.assign_block_table(
                     &mut region,
                     &mut block_table_offset,
@@ -1773,7 +1773,7 @@ impl<F: Field> SubCircuit<F> for PiCircuit<F> {
                         call_data_offset += 1;
                         calldata_count += 1;
                     }
-                    println!("=== DEBUG (PI): assign calldata count={}, offset={}, max={}", calldata_count, call_data_offset, config.max_calldata);
+                    // println!("=== DEBUG (PI): assign calldata count={}, offset={}, max={}", calldata_count, call_data_offset, config.max_calldata);
                 }
 
                 for _ in calldata_count..config.max_calldata {

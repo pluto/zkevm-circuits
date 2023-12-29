@@ -604,7 +604,7 @@ impl<F: Field> CopyCircuitConfig<F> {
         );
         let filler_rows = max_copy_rows - copy_rows_needed - DISABLED_ROWS;
 
-        println!("===DEBUG (COPY): copy_rows_needed={}, max_copy_rows={}", copy_rows_needed, max_copy_rows);
+        // println!("===DEBUG (COPY): copy_rows_needed={}, max_copy_rows={}", copy_rows_needed, max_copy_rows);
         let tag_chip = BinaryNumberChip::construct(self.copy_table.tag);
         let lt_chip = LtChip::construct(self.addr_lt_addr_end);
 

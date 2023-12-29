@@ -14,8 +14,10 @@ members = [
     "light-client-poc"
 ]
 
-[patch.crates-io]
-halo2_proofs = { git = "https://github.com/privacy-scaling-explorations/halo2.git", tag = "v2023_04_20" }
+# [patch.crates-io]
+# halo2_proofs = { path="../halo2-pse/halo2_proofs", features=["dev-graph"]}
+# halo2_proofs = { git = "https://github.com/privacy-scaling-explorations/halo2.git", tag = "v2023_04_20" }
+
 
 # Definition of benchmarks profile to use.
 [profile.bench]

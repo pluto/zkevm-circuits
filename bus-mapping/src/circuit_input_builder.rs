@@ -333,6 +333,12 @@ impl CircuitInputBuilder<FixedCParams> {
             );
         }
         let (padding_start, padding_end) = (1, max_rws - total_rws); // rw counter start from 1
+
+        println!(
+            "=== DEBUG: total_rws={}, max_rws={}, padding_start={}, padding_end={}", 
+            total_rws, max_rws, padding_start, padding_end
+        );
+        
         push_op(
             &mut end_block_last,
             RWCounter(padding_start),
