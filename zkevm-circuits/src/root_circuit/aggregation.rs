@@ -187,6 +187,8 @@ impl AggregationConfig {
     /// Configure for `MainGate` and `RangeChip` with corresponding fixed lookup
     /// table.
     pub fn configure<C: CurveAffine>(meta: &mut ConstraintSystem<C::Scalar>) -> Self {
+
+
         //let main_gate_config = MainGate::<C::Scalar>::configure(meta);
         // let range_config = RangeChip::<C::Scalar>::configure(
         //     meta,
@@ -198,6 +200,8 @@ impl AggregationConfig {
         //     main_gate_config,
         //     range_config,
         // }
+
+
         Self {
         }
     }

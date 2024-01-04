@@ -2204,7 +2204,7 @@ dependencies = [
  "lazy_static",
  "num-bigint",
  "num-traits",
- "pasta_curves 0.5.1",
+ "pasta_curves",
  "paste",
  "rand",
  "rand_core",
@@ -2225,7 +2225,7 @@ dependencies = [
  "num-bigint",
  "num-traits",
  "pairing",
- "pasta_curves 0.5.0",
+ "pasta_curves",
  "paste",
  "rand",
  "rand_core",
@@ -3346,19 +3346,6 @@ checksum = "7676374caaee8a325c9e7a2ae557f216c5563a171d6997b0ef8a65af35147700"
 dependencies = [
  "base64ct",
  "rand_core",
- "subtle",
-]
-
-[[package]]
-name = "pasta_curves"
-version = "0.5.0"
-dependencies = [
- "blake2b_simd",
- "ff",
- "group",
- "lazy_static",
- "rand",
- "static_assertions",
  "subtle",
 ]
 
